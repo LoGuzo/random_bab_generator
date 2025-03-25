@@ -1,7 +1,8 @@
-#include <stdio.h>
+#include "header.h"
+#include "shuffle.h"
 
 int main(int argc, char *argv[]) {
   // this
-	printf();
-  return 0;
+	//shuffle_member(argv);
+	return 0;
 }
