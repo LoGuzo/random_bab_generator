@@ -1,7 +1,7 @@
 #include "header.h"
 
-#ifndef SHUFFLE_MEMBER
-#define SHUFFLE_MEMBER
+#ifndef SHUFFLE_H
+#define SHUFFLE_H
 
 void shuffle_member(char**, int);
 void swap(char**, char**);

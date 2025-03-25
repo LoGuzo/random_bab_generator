@@ -1,4 +1,3 @@
-#include "shuffle.h"
 #include <time.h>
 #include <stdlib.h>
 
