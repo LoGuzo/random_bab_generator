@@ -1,8 +1,8 @@
-#include "header.h"
-#include "shuffle.h"
+#include "../inc/header.h"
+#include "../inc/shuffle.h"
 
 int main(int argc, char *argv[]) {
   // this
-	//shuffle_member(argv);
-	return 0;
+  // shuffle_member(argv);
+  return 0;
 }
