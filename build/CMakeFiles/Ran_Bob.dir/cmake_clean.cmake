@@ -1,8 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.o"
   "CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.o.d"
-  "CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.o"
-  "CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.o.d"
   "Ran_Bob"
   "Ran_Bob.pdb"
 )

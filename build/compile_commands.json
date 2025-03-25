@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/build",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/cc  -I/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/build/../inc  -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -o CMakeFiles/Random_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.o -c /Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c",
+  "file": "/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c",
+  "output": "CMakeFiles/Random_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.o"
+}
+]

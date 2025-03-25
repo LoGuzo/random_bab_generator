@@ -72,24 +72,10 @@ include CMakeFiles/Ran_Bob.dir/flags.make
 CMakeFiles/Ran_Bob.dir/codegen:
 .PHONY : CMakeFiles/Ran_Bob.dir/codegen
 
-CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.o: CMakeFiles/Ran_Bob.dir/flags.make
-CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.o: /Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c
-CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.o: CMakeFiles/Ran_Bob.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.o"
-	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.o -MF CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.o.d -o CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.o -c /Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c
-
-CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.i"
-	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c > CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.i
-
-CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.s"
-	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c -o CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.s
-
 CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.o: CMakeFiles/Ran_Bob.dir/flags.make
 CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.o: /Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c
 CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.o: CMakeFiles/Ran_Bob.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.o"
 	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.o -MF CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.o.d -o CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.o -c /Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c
 
 CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.i: cmake_force
@@ -102,17 +88,15 @@ CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_G
 
 # Object files for target Ran_Bob
 Ran_Bob_OBJECTS = \
-"CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.o" \
 "CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.o"
 
 # External object files for target Ran_Bob
 Ran_Bob_EXTERNAL_OBJECTS =
 
-Ran_Bob: CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.o
 Ran_Bob: CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.o
 Ran_Bob: CMakeFiles/Ran_Bob.dir/build.make
 Ran_Bob: CMakeFiles/Ran_Bob.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C executable Ran_Bob"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C executable Ran_Bob"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/Ran_Bob.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

@@ -117,24 +117,24 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named Ran_Bob
+# Target rules for targets named Random_Bob
 
 # Build rule for target.
-Ran_Bob: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Ran_Bob
-.PHONY : Ran_Bob
+Random_Bob: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Random_Bob
+.PHONY : Random_Bob
 
 # fast build rule for target.
-Ran_Bob/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ran_Bob.dir/build.make CMakeFiles/Ran_Bob.dir/build
-.PHONY : Ran_Bob/fast
+Random_Bob/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Random_Bob.dir/build.make CMakeFiles/Random_Bob.dir/build
+.PHONY : Random_Bob/fast
 
 Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.o: Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.o
 .PHONY : Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.o
 
 # target to build an object file
 Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ran_Bob.dir/build.make CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Random_Bob.dir/build.make CMakeFiles/Random_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.o
 .PHONY : Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.o
 
 Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.i: Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.i
@@ -142,7 +142,7 @@ Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.i: Us
 
 # target to preprocess a source file
 Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ran_Bob.dir/build.make CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Random_Bob.dir/build.make CMakeFiles/Random_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.i
 .PHONY : Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.i
 
 Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.s: Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.s
@@ -150,32 +150,8 @@ Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.s: Us
 
 # target to generate assembly for a file
 Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ran_Bob.dir/build.make CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Random_Bob.dir/build.make CMakeFiles/Random_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.s
 .PHONY : Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.c.s
-
-Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.o: Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.o
-.PHONY : Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.o
-
-# target to build an object file
-Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ran_Bob.dir/build.make CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.o
-.PHONY : Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.o
-
-Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.i: Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.i
-.PHONY : Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.i
-
-# target to preprocess a source file
-Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ran_Bob.dir/build.make CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.i
-.PHONY : Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.i
-
-Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.s: Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.s
-.PHONY : Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.s
-
-# target to generate assembly for a file
-Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ran_Bob.dir/build.make CMakeFiles/Ran_Bob.dir/Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.s
-.PHONY : Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.c.s
 
 # Help Target
 help:
@@ -185,13 +161,10 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... Ran_Bob"
+	@echo "... Random_Bob"
 	@echo "... Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.o"
 	@echo "... Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.i"
 	@echo "... Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/main.s"
-	@echo "... Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.o"
-	@echo "... Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.i"
-	@echo "... Users/yeseongmoon/Desktop/empty/Side_Project/Random_Bab_Generator/src/shuffle.s"
 .PHONY : help
 
 

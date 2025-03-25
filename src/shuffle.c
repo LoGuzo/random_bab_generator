@@ -1,4 +1,4 @@
-#include "../inc/shuffle.h"
+#include "shuffle.h"
 #include <stdlib.h>
 #include <time.h>
 

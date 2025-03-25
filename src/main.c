@@ -1,5 +1,5 @@
-#include "../inc/header.h"
-#include "../inc/shuffle.h"
+#include "header.h"
+#include "shuffle.h"
 
 int main(int argc, char *argv[]) {
   // this
