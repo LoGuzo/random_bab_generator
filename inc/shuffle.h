@@ -1,10 +1,11 @@
-#include "header.h"
+#include "../inc/header.h"
+#include "../inc/array.h"
 
 #ifndef SHUFFLE_H
 #define SHUFFLE_H
 
-void shuffle_member(char**, int);
-void swap(char**, char**);
+void shuffle_member(LPARRAY);
+void swap(LPDATA*, LPDATA*);
 void assign_member(char**, int);
 
 #endif

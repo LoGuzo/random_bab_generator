@@ -2,15 +2,16 @@
 #include <stdlib.h>
 #include <time.h>
 
-void shuffle_member(char **members, int member_cnt) {
-  for (int i = member_cnt - 1; i > 0; i--) {
-    int j = rand() % (i + 1);
-    swap(&members[i], &members[j]);
-  }
+void shuffle_member(LPARRAY array) {
+    srand(time(NULL));
+    for (int i = array->size - 1; i > 0; i--) {
+        int j = rand() % (i + 1);
+        swap(&array->lpData[i], &array->lpData[j]);
+    }
 }
 
-void swap(char **name1, char **name2) {
-  char *temp = *name1;
+void swap(LPDATA* name1, LPDATA* name2) {
+   LPDATA* temp = *name1;
   *name1 = *name2;
   *name2 = temp;
 }
