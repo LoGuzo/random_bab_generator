@@ -18,7 +18,7 @@ void init_string(struct string* s) {
     s->ptr[0] = '\0';
 }
 
-// 인코더 0입력시 ACP->UTF8 1입력시 CP_ACP
+// 인코더 0 입력시 ACP->UTF8, 1 입력시 UTF8 -> ACP
 char* encoder(const char* input, int encode) {
     int from = (encode == 1) ? CP_ACP : CP_UTF8;
     int to = (encode == 1) ? CP_UTF8 : CP_ACP;
@@ -59,6 +59,47 @@ size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s) {
     s->ptr[new_len] = '\0';
     s->len = new_len;
     return size * nmemb;
+}
+
+
+void request_API(SlackChannel* channels, LPARRAY* slack_members)
+{
+    int channel_count = 0;
+
+    const char* token = get_token_from_file("config.txt");
+    if (!token) {
+        fprintf(stderr, "토큰을 불러올 수 없습니다\n");
+        return 1;
+    }
+
+    if (!slack_fetch_channels(token, channels, &channel_count)) {
+        fprintf(stderr, "채널 정보를 가져오는 데 실패했습니다\n");
+        return 1;
+    }
+
+    printf("\n[Slack 채널 목록]\n");
+
+    for (int i = 0; i < channel_count; i++) {
+        printf("%2d. %s\n", i, channels[i].name);
+    }
+
+    int choice;
+    printf("\n=> 사용할 채널 번호를 입력하세요: ");
+    scanf("%d", &choice);
+
+    if (choice < 0 || choice >= channel_count) {
+        printf("잘못된 번호입니다.\n");
+        return 1;
+    }
+
+    printf("선택된 채널: %s (ID: %s)\n", channels[choice].name, channels[choice].id);
+
+    slack_conversation_members(channels[choice].id, token, slack_members);
+
+    //slack_recent_message(channels[choice].id, token);
+
+    //slack_send_message(channels[choice].id, token, "테스팅중입니다. :)");
+    return 0;
 }
 
 char* get_token_from_file(const char* filename) {
@@ -155,7 +196,7 @@ int slack_fetch_channels(const char* token, SlackChannel* channels, int* channel
 
     return 1;
 }
-void slack_user_name_by_id(const char* user_id, const char* token) {
+void slack_user_name_by_id(const char* user_id, const char* token, LPARRAY* slack_members) {
     CURL* curl = curl_easy_init();
     if (!curl) return;
 
@@ -209,12 +250,20 @@ void slack_user_name_by_id(const char* user_id, const char* token) {
             fprintf(stderr, "Profile 없음.\n");
             return 0;
         }
+        
+        SlackMember slackMember;
 
         const char* name = json_string_value(json_object_get(profile, "display_name"));
         if (!name)
             name = json_string_value(json_object_get(profile, "real_name"));
-        SetConsoleOutputCP(CP_UTF8);
-        printf("사용자 이름: %s\n", name);
+
+        //name = encoder(name, 0);
+
+        strcpy(slackMember.name, encoder(name, 0));
+
+        arrayAdd(*slack_members, &slackMember);
+
+        printf("사용자 이름: %s\n", slackMember.name);
 
         json_decref(root);
     }
@@ -225,7 +274,7 @@ void slack_user_name_by_id(const char* user_id, const char* token) {
     free(response.ptr);
 }
 
-void slack_conversation_members(const char* channel_id, const char* token) {
+void slack_conversation_members(const char* channel_id, const char* token, LPARRAY* slack_members) {
     CURL* curl = curl_easy_init();
     if (!curl) return;
 
@@ -273,7 +322,7 @@ void slack_conversation_members(const char* channel_id, const char* token) {
         json_array_foreach(members, index, member) {
             const char* user_id = json_string_value(member);
             if (user_id) {
-                slack_user_name_by_id(user_id, token); // 밑에 정의될 함수
+                slack_user_name_by_id(user_id, token, slack_members); // 밑에 정의될 함수
             }
         }
         json_decref(root);

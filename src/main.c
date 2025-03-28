@@ -1,26 +1,21 @@
 #include "../inc/array.h"
 #include "../inc/header.h"
 #include "../inc/shuffle.h"
+#include "../inc/slack_api.h"
 
 int main(int argc, char *argv[]) {
-	LPARRAY members;
+	LPARRAY members[ARRAR_INIT_SIZE];
+	LPARRAY group_members[ARRAR_INIT_SIZE];
+	LPARRAY lastweak_group_members[ARRAR_INIT_SIZE];
+	SlackChannel channels[ARRAR_INIT_SIZE];
+
 	arrayCreate(&members);
+	arrayCreate(&group_members);
+	arrayCreate(&lastweak_group_members);
 	
-	arrayAdd(members, "chk");
-	arrayAdd(members, "chk1");
-	arrayAdd(members, "chk2");
-	arrayAdd(members, "chk3");
-	arrayAdd(members, "chk4");
-	arrayAdd(members, "chk5");
-	arrayAdd(members, "chk6");
-	arrayAdd(members, "chk7");
-	arrayAdd(members, "chk8");
+	request_API(&channels, &members);
 
 	shuffle_member(members);
-
-	for (int i = 0;i < members->size;i++) {
-		printf("%s", members->lpData[i]);
-	}
 
 	arrayDestroy(members);
 	return 0;

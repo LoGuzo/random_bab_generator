@@ -37,5 +37,4 @@ int arraySetAt(LPARRAY lpArray, int nPos, const LPDATA lpValue);
 int arrayAdd(LPARRAY lpArray, const LPDATA lpValue);
 int arrayRemoveAt(LPARRAY lpArray, int nPos);
 int arrayDestroy(LPARRAY lpArray);
-
 #endif //_ARRAY_H_
