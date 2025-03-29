@@ -1,11 +1,12 @@
 .vs/
 random_b.EC16BC4F/
 x64/
+out/
+lib/
 *.sln
 *.vcxproj
 *.filters
 *.user
-out/
 
 # Created by https://www.toptal.com/developers/gitignore/api/cmake
 # Edit at https://www.toptal.com/developers/gitignore?templates=cmake
@@ -32,3 +33,6 @@ CMakeUserPresets.json
 *-prefix/
 
 # End of https://www.toptal.com/developers/gitignore/api/cmake
+
+.env
+.venv

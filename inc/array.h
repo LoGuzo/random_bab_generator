@@ -5,7 +5,7 @@
 /*메직 코드 상수로 선언한다*/
 #define ARRAY_MAGIC_CODE        0x12345678
 /*배열의 초기 크기를 관리하기 위한 상수*/
-#define ARRAR_INIT_SIZE         16
+#define ARRAR_INIT_SIZE         30
 
 /*오류에 대한 값을 선언한다.*/
 #define ERR_ARRAY_OK              0     /*성공시 상수값*/
@@ -37,5 +37,4 @@ int arraySetAt(LPARRAY lpArray, int nPos, const LPDATA lpValue);
 int arrayAdd(LPARRAY lpArray, const LPDATA lpValue);
 int arrayRemoveAt(LPARRAY lpArray, int nPos);
 int arrayDestroy(LPARRAY lpArray);
-
 #endif //_ARRAY_H_
