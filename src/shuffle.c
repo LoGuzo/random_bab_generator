@@ -1,11 +1,19 @@
-#include "../inc/shuffle.h"
-#include "../inc/slack_api.h"
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include "../inc/shuffle.h"
+#include "../inc/slack_api.h"
+
+void assign_memeber(LPARRAY member, LPARRAY last_week_member, int group_size)
+{
+    srand(time(NULL));
+    
+    do {
+        shuffle_member(member);
+    } while (has_group_overlap(member, last_week_member, group_size));
+}
 
 void shuffle_member(LPARRAY array) {
-    srand(time(NULL));
     for (int i = array->size - 1; i > 0; i--) {
         int j = rand() % (i + 1);
         swap(&array->lpData[i], &array->lpData[j]);
@@ -13,78 +21,66 @@ void shuffle_member(LPARRAY array) {
 }
 
 void swap(LPDATA* name1, LPDATA* name2) {
-    LPDATA* temp = *name1;
+    LPDATA temp = *name1;
     *name1 = *name2;
     *name2 = temp;
 }
 
-int makeGroups(LPARRAY students, int groupSize, LPARRAY resultGroups, int* groupCount)
+int has_group_overlap(LPARRAY members, LPARRAY last_week_members, int group_size)
 {
-    *groupCount = 0;
-    shuffle_member(students);
+    int group_count = (members->size + group_size - 1) / group_size;
 
-    int i = 0;
-    while (i < students->size) {
-        LPARRAY group;
-        arrayCreate(group); // 새 조 만들기
-        for (int j = 0; j < groupSize && i + j < students->size; j++) {
-            arrayAdd(group, students->lpData[i + j]);
-        }
-        resultGroups[*groupCount].lpData = group;
-        (*groupCount)++;
-        i += groupSize;
-    }
-    return 1;
-}
+    for (int g = 0; g < group_count; g++) {
+        // 이번 주 조 하나 가져오기
+        int overlap = 0;
 
-int count_overlap(LPARRAY g1, LPARRAY g2)
-{
-    int count = 0;
-    for (int i = 0; i < g1->size; i++) {
-        for (int j = 0; j < g2->size; j++) {
-            if (strcmp(((SlackMember*)g1->lpData[i])->name, ((SlackMember*)g2->lpData[j])->name) == 0) {
-                count++;
+        for (int i = 0; i < group_size; i++) {
+            int idx = g * group_size + i;
+            if (idx >= members->size) break;
+
+            SlackMember* curr = (SlackMember*)members->lpData[idx];
+
+            // 지난주 전체 조에서 현재 멤버가 어디 조에 있었는지 확인
+            int last_group_index = -1;
+
+            for (int l = 0; l < last_week_members->size; l++) {
+                SlackMember* prev = (SlackMember*)last_week_members->lpData[l];
+                if (strcmp(curr->name, prev->name) == 0) {
+                    last_group_index = l / group_size; // 지난 주 조 번호
+                    break;
+                }
             }
-        }
-    }
-    return count;
-}
 
-int is_group_conflict(LPARRAY group, LPARRAY lastWeekGroups, int lastGroupCount, int groupSize)
-{
-    for (int i = 0; i < lastGroupCount; i++) {
-        if (count_overlap(group, *(lastWeekGroups[i].lpData)) >= groupSize - 2) {
-            return 1;
-        }
-    }
-    return 0;
-}
+            // 이번 조 내의 다른 멤버들과 함께 지난 주에도 같은 조였는지 확인
+            for (int j = 0; j < group_size; j++) {
+                if (i == j) continue;
 
-int makeGroupsWithConstraint(LPARRAY students, int groupSize, LPARRAY lastWeekGroups, int lastGroupCount, LPARRAY resultGroups, int* groupCount)
-{
-    const int MAX_ATTEMPTS = 1000;
-    for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-        int tempCount = 0;
-        if (!makeGroups(students, groupSize, resultGroups, &tempCount)) continue;
+                int idx2 = g * group_size + j;
+                if (idx2 >= members->size) break;
 
-        int conflict = 0;
-        for (int i = 0; i < tempCount; i++) {
-            if (is_group_conflict(*(resultGroups[i].lpData), lastWeekGroups, lastGroupCount, groupSize)) {
-                conflict = 1;
-                break;
+                SlackMember* other = (SlackMember*)members->lpData[idx2];
+
+                // 이 멤버도 지난 주 같은 조에 있었는지 확인
+                int other_last_group = -1;
+                for (int l = 0; l < last_week_members->size; l++) {
+                    SlackMember* prev = (SlackMember*)last_week_members->lpData[l];
+                    if (strcmp(other->name, prev->name) == 0) {
+                        other_last_group = l / group_size;
+                        break;
+                    }
+                }
+
+                if (last_group_index != -1 && last_group_index == other_last_group) {
+                    overlap++;
+                }
             }
         }
 
-        if (!conflict) {
-            *groupCount = tempCount;
-            return 1; // 성공
-        }
-
-        // conflict 시 할당한 그룹 해제
-        for (int i = 0; i < tempCount; i++) {
-            arrayDestroy(*(resultGroups[i].lpData));
+        // 4명 기준 → 최대 6쌍 비교 → 3쌍 이상이면 3명 이상 겹친 것
+        if (overlap > (group_size + 1 / 2)) {
+            return 1; // 조건 위반
         }
     }
 
-    return 0; // 실패
+    return 0; // 조건 만족
 }
