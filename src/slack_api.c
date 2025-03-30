@@ -6,6 +6,7 @@
 #include "../inc/slack_api.h"
 #include "../inc/shuffle.h"
 
+// string 초기화
 void init_string(struct string* s) {
     s->len = 0;
     s->ptr = malloc(1);
@@ -46,6 +47,7 @@ char* encoder(const char* input, int encode) {
     return result;
 }
 
+// json파일 파싱시 사용할 wirtefunc 제작
 size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s) {
     size_t new_len = s->len + size * nmemb;
     s->ptr = realloc(s->ptr, new_len + 1);
@@ -59,6 +61,7 @@ size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s) {
     return size * nmemb;
 }
 
+// 텍스트에서 인원을 추출
 int parse_members_from_text(const char* text, LPARRAY last_week_members)
 {
     char temp[2048];
@@ -107,6 +110,7 @@ int parse_members_from_text(const char* text, LPARRAY last_week_members)
     return 0;
 }
 
+// 배열에있는 이름을 1조 : 홍길동, ... 과 같이 바꾸어 합병
 char* merge_members_text(LPARRAY slack_members, int group_size)
 {
     char* merge_text = (char*)malloc(2048);
@@ -137,6 +141,7 @@ char* merge_members_text(LPARRAY slack_members, int group_size)
     return merge_text;
 }
 
+// slack에 각 기능을 사용하기 위한 api 요청
 void request_API(SlackChannel* channels, LPARRAY slack_members, LPARRAY last_week_members)
 {
     int channel_count = 0;
@@ -182,6 +187,7 @@ void request_API(SlackChannel* channels, LPARRAY slack_members, LPARRAY last_wee
     return;
 }
 
+// txt파일에서 bot_token 추출
 char* get_token_from_file(const char* filename) {
     FILE* file = fopen(filename, "r");
     static char token[256];
@@ -204,6 +210,7 @@ char* get_token_from_file(const char* filename) {
     return NULL;
 }
 
+// 채널명 가져오기
 int slack_fetch_channels(const char* token, SlackChannel* channels, int* channel_count) {
     CURL* curl = curl_easy_init();
     struct curl_slist* headers = NULL;
@@ -277,6 +284,7 @@ int slack_fetch_channels(const char* token, SlackChannel* channels, int* channel
     return 1;
 }
 
+// 유저 id를 사용하여 유저의 이름 가져오기
 void slack_user_name_by_id(const char* user_id, const char* token, LPARRAY slack_members) {
     CURL* curl = curl_easy_init();
     if (!curl) return;
@@ -353,6 +361,7 @@ void slack_user_name_by_id(const char* user_id, const char* token, LPARRAY slack
     free(response.ptr);
 }
 
+// 대화 채널 내 멤버들 아이디 가져오기
 void slack_conversation_members(const char* channel_id, const char* token, LPARRAY slack_members) {
     CURL* curl = curl_easy_init();
     if (!curl) return;
@@ -413,6 +422,7 @@ void slack_conversation_members(const char* channel_id, const char* token, LPARR
     free(response.ptr);
 }
 
+// 합병했던 text를 slack에 전송
 void slack_send_message(char* channel_id, const char* token, const char* text) {
     CURL* curl = curl_easy_init();
     if (!curl) return;
@@ -454,6 +464,7 @@ void slack_send_message(char* channel_id, const char* token, const char* text) {
     curl_easy_cleanup(curl);
 }
 
+// 최근 메세지 가져오기
 void slack_recent_message(char* channel_id, const char* token, LPARRAY last_week_members) {
     CURL* curl = curl_easy_init();
     if (!curl) return;
