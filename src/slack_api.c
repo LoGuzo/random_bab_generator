@@ -11,7 +11,8 @@
 #else
 #include <wchar.h>
 #include <locale.h>
-#include <unitypes.h>
+#include <unistd.h>
+#include <libgen.h>
 #endif
 
 // string 초기화
@@ -231,7 +232,7 @@ char* get_token_from_file(const char* filename) {
     char path[1024];
     ssize_t len = readlink("/proc/self/exe", path, sizeof(path) - 1);
     if (len == -1) {
-        perror("실행 파일 경로 읽기 실패");
+        perror("Read Fail");
         return NULL;
     }
     path[len] = '\0';
