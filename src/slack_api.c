@@ -11,6 +11,7 @@
 #else
 #include <wchar.h>
 #include <locale.h>
+#include <unitypes.h>
 #endif
 
 // string 초기화
@@ -18,7 +19,7 @@ void init_string(struct string* s) {
     s->len = 0;
     s->ptr = malloc(1);
     if (s->ptr == NULL) {
-        fprintf(stderr, "메모리 할당 실패\n");
+        fprintf(stderr, "Memory Allocate Fail\n");
         exit(1);
     }
     s->ptr[0] = '\0';
@@ -102,7 +103,7 @@ size_t writefunc(void* ptr, size_t size, size_t nmemb, struct string* s) {
     size_t new_len = s->len + size * nmemb;
     s->ptr = realloc(s->ptr, new_len + 1);
     if (s->ptr == NULL) {
-        fprintf(stderr, "메모리 재할당 실패\n");
+        fprintf(stderr, "Memory Allocate Fail\n");
         exit(1);
     }
     memcpy(s->ptr + s->len, ptr, size * nmemb);
@@ -175,7 +176,7 @@ char* merge_members_text(LPARRAY slack_members, int group_size)
 
     for (int i = 0; i < slack_members->size; i++) {
         if (i % group_size == 0) {
-            offset += snprintf(merge_text + offset, text_size - offset, "%d조 : ", group_num++);
+            offset += snprintf(merge_text + offset, text_size - offset, "#%d : ", group_num++);
         }
 
         SlackMember* member = (SlackMember*)(slack_members->lpData[i]);
@@ -199,33 +200,33 @@ void request_API(SlackChannel* channels, LPARRAY slack_members, LPARRAY last_wee
 
     const char* token = get_token_from_file("config.txt");
     if (!token) {
-        fprintf(stderr, "토큰을 불러올 수 없습니다\n");
+        fprintf(stderr, "Can't read token\n");
         return;
     }
 
     if (!slack_fetch_channels(token, channels, &channel_count)) {
-        fprintf(stderr, "채널 정보를 가져오는 데 실패했습니다\n");
+        fprintf(stderr, "Take Channel Info Fail\n");
         return;
     }
 
-    printf("\n[Slack 채널 목록]\n");
+    printf("\n[Slack Channel]\n");
 
     for (int i = 0; i < channel_count; i++) {
         printf("%2d. %s\n", i, channels[i].name);
     }
 
     int choice;
-    printf("\n=> 사용할 채널 번호를 입력하세요: ");
+    printf("\n=> input using channel number : ");
     scanf("%d", &choice);
 
     if (choice < 0 || choice >= channel_count) {
-        printf("잘못된 번호입니다.\n");
+        printf("wrong number.\n");
         return;
     }
 
-    printf("선택된 채널: %s (ID: %s)\n", channels[choice].name, channels[choice].id);
+    printf("selected channel: %s (ID: %s)\n", channels[choice].name, channels[choice].id);
 
-    //slack_conversation_members(channels[choice].id, token, slack_members);
+    slack_conversation_members(channels[choice].id, token, slack_members);
 
     slack_recent_message(channels[choice].id, token, last_week_members);
 
@@ -243,7 +244,7 @@ char* get_token_from_file(const char* filename) {
     FILE* file = fopen(filename, "r");
     static char token[256];
     if (!file) {
-        perror("config.txt 파일을 열 수 없습니다");
+        perror("Can't open config.txt");
         return NULL;
     }
 
@@ -269,7 +270,7 @@ int slack_fetch_channels(const char* token, SlackChannel* channels, int* channel
     init_string(&response);
 
     if (!curl) {
-        fprintf(stderr, "curl 초기화 실패\n");
+        fprintf(stderr, "curl Initalize Fail\n");
         return 0;
     }
 
@@ -286,7 +287,7 @@ int slack_fetch_channels(const char* token, SlackChannel* channels, int* channel
 
     CURLcode res = curl_easy_perform(curl);
     if (res != CURLE_OK) {
-        fprintf(stderr, "API 요청 실패: %s\n", curl_easy_strerror(res));
+        fprintf(stderr, "API Request Fail: %s\n", curl_easy_strerror(res));
         curl_easy_cleanup(curl);
         return 0;
     }
@@ -295,19 +296,19 @@ int slack_fetch_channels(const char* token, SlackChannel* channels, int* channel
     json_error_t error;
     json_t* root = json_loads(response.ptr, 0, &error);
     if (!root) {
-        fprintf(stderr, "JSON 파싱 에러: %s\n", error.text);
+        fprintf(stderr, "JSON Parse Error: %s\n", error.text);
         return 0;
     }
 
     json_t* ok = json_object_get(root, "ok");
     if (!json_is_true(ok)) {
-        fprintf(stderr, "Slack API 호출 실패: %s\n", response.ptr);
+        fprintf(stderr, "Slack API Call Fail: %s\n", response.ptr);
         return 0;
     }
 
     json_t* chs = json_object_get(root, "channels");
     if (!json_is_array(chs)) {
-        fprintf(stderr, "channels 배열이 없음\n");
+        fprintf(stderr, "NO channels array\n");
         return 0;
     }
 
@@ -363,19 +364,19 @@ void slack_user_name_by_id(const char* user_id, const char* token, LPARRAY slack
 
         json_t* root = json_loads(response.ptr, 0, &error);
         if (!root) {
-            fprintf(stderr, "JSON 파싱 에러: %s\n", error.text);
+            fprintf(stderr, "JSON Parse Error: %s\n", error.text);
             return;
         }
 
         json_t* ok = json_object_get(root, "ok");
         if (!json_is_true(ok)) {
-            fprintf(stderr, "Slack API 호출 실패: %s\n", response.ptr);
+            fprintf(stderr, "Slack API Call Fail: %s\n", response.ptr);
             return;
         }
 
         json_t* user = json_object_get(root, "user");
         if (!json_is_object(user)) {
-            fprintf(stderr, "User 없음.\n");
+            fprintf(stderr, "NO User.\n");
             return;
         }
 
@@ -392,7 +393,7 @@ void slack_user_name_by_id(const char* user_id, const char* token, LPARRAY slack
         json_t* profile = json_object_get(user, "profile");
 
         if (!json_is_object(profile)) {
-            fprintf(stderr, "Profile 없음.\n");
+            fprintf(stderr, "NO Profile.\n");
             return;
         }
         
@@ -445,19 +446,19 @@ void slack_conversation_members(const char* channel_id, const char* token, LPARR
 
         json_t* root = json_loads(response.ptr, 0, &error);
         if (!root) {
-            fprintf(stderr, "JSON 파싱 에러: %s\n", error.text);
+            fprintf(stderr, "JSON Parse Error: %s\n", error.text);
             return;
         }
 
         json_t* ok = json_object_get(root, "ok");
         if (!json_is_true(ok)) {
-            fprintf(stderr, "Slack API 호출 실패: %s\n", response.ptr);
+            fprintf(stderr, "Slack API Call Fail: %s\n", response.ptr);
             return;
         }
 
         json_t* members = json_object_get(root, "members");
         if (!json_is_array(members)) {
-            fprintf(stderr, "members 배열이 없음 : %s\n", response.ptr);
+            fprintf(stderr, "NO Members Array : %s\n", response.ptr);
             return;
         }
 
@@ -513,7 +514,7 @@ void slack_send_message(char* channel_id, const char* token, const char* text) {
 
     CURLcode response = curl_easy_perform(curl);
     if (response != CURLE_OK) {
-        fprintf(stderr, "Slack 전송 실패: %s\n", curl_easy_strerror(response));
+        fprintf(stderr, "Slack Send Fail: %s\n", curl_easy_strerror(response));
     }
 
     curl_slist_free_all(headers);
@@ -548,19 +549,19 @@ void slack_recent_message(char* channel_id, const char* token, LPARRAY last_week
 
         json_t* root = json_loads(response.ptr, 0, &error);
         if (!root) {
-            fprintf(stderr, "JSON 파싱 에러: %s\n", error.text);
+            fprintf(stderr, "JSON Parse Error: %s\n", error.text);
             return;
         }
 
         json_t* ok = json_object_get(root, "ok");
         if (!json_is_true(ok)) {
-            fprintf(stderr, "Slack API 호출 실패: %s\n", response.ptr);
+            fprintf(stderr, "Slack API Call Fail: %s\n", response.ptr);
             return;
         }
 
         json_t* messages = json_object_get(root, "messages");
         if (!json_is_array(messages)) {
-            fprintf(stderr, "message 배열 비어있음\n");
+            fprintf(stderr, "NO message array\n");
             return;
         }
         const char* text = json_string_value(json_object_get(messages, "text"));

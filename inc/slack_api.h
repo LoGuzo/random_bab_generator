@@ -1,10 +1,15 @@
-#include "array.h"
-
 #ifndef SLACK_API_H
 #define SLACK_API_H
 
+#include "array.h"
+
 #define MAX_CHANNELS 100
 #define MAX_MEMBERS 200
+
+#ifdef _WIN32
+#else
+#include <unitypes.h>
+#endif
 
 struct string {
     char* ptr;
