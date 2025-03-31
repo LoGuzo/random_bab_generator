@@ -93,7 +93,7 @@ def custom_command_function(ack, respond, command):
 
     # Send the message to the whole channel
     client.chat_postMessage(channel=channel_id, text="<!channel>")
-    formatted_message = f"👥 *Group Generation Result:*\n```{output}```"
+    formatted_message = f"👥 *이번 주 랜덤밥🍚:*\n{output}"
     client.chat_postMessage(
         channel=channel_id, text=formatted_message
     )  # Send to channel
