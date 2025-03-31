@@ -6,6 +6,13 @@
 #include "../inc/slack_api.h"
 #include "../inc/shuffle.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <wchar.h>
+#include <locale.h>
+#endif
+
 // string 초기화
 void init_string(struct string* s) {
     s->len = 0;
@@ -17,34 +24,77 @@ void init_string(struct string* s) {
     s->ptr[0] = '\0';
 }
 
+char* safe_strtok(char* str, const char* delim, char** context){
+#ifdef _WIN32
+    return strtok_s(str, delim, context);
+#else
+    return strtok_r(str, delim, context);
+#endif
+}
+
 // 인코더 1 입력시 ACP->UTF8, 0 입력시 UTF8 -> ACP
 char* encoder(const char* input, int encode) {
+#ifdef _WIN32
     int from = (encode == 1) ? CP_ACP : CP_UTF8;
     int to = (encode == 1) ? CP_UTF8 : CP_ACP;
 
     int wlen = MultiByteToWideChar(from, 0, input, -1, NULL, 0);
     if (wlen <= 0) return NULL;
 
-    wchar_t* wstr = (wchar_t*)malloc(wlen * sizeof(wchar_t));
+    wchar_t* wstr = (wchar_t*)malloc(sizeof(wchar_t) * wlen);
     if (!wstr) return NULL;
 
     MultiByteToWideChar(from, 0, input, -1, wstr, wlen);
 
-    int outputLen = WideCharToMultiByte(to, 0, wstr, -1, NULL, 0, NULL, NULL);
-    if (outputLen <= 0) {
+    int u8len = WideCharToMultiByte(to, 0, wstr, -1, NULL, 0, NULL, NULL);
+    if (u8len <= 0) {
         free(wstr);
         return NULL;
     }
 
-    char* result = (char*)malloc(outputLen);
+    char* result = (char*)malloc(u8len);
     if (!result) {
         free(wstr);
         return NULL;
     }
 
-    WideCharToMultiByte(to, 0, wstr, -1, result, outputLen, NULL, NULL);
+    WideCharToMultiByte(to, 0, wstr, -1, result, u8len, NULL, NULL);
     free(wstr);
     return result;
+
+#else  // Linux, Unix
+
+    // 로캘 세팅 (한 번만 호출해도 무방하긴 함)
+    setlocale(LC_ALL, "");
+
+    // Step 1: 멀티바이트 → 와이드
+    size_t wlen = mbstowcs(NULL, input, 0);
+    if (wlen == (size_t)-1) return NULL;
+
+    wchar_t* wstr = (wchar_t*)malloc((wlen + 1) * sizeof(wchar_t));
+    if (!wstr) return NULL;
+
+    mbstowcs(wstr, input, wlen + 1);
+
+    // Step 2: 와이드 → 멀티바이트 (다른 방향)
+    size_t mblen = wcstombs(NULL, wstr, 0);
+    if (mblen == (size_t)-1) {
+        free(wstr);
+        return NULL;
+    }
+
+    char* result = (char*)malloc(mblen + 1);
+    if (!result) {
+        free(wstr);
+        return NULL;
+    }
+
+    wcstombs(result, wstr, mblen + 1);
+    free(wstr);
+
+    return result;
+
+#endif
 }
 
 // json파일 파싱시 사용할 wirtefunc 제작
@@ -69,26 +119,26 @@ int parse_members_from_text(const char* text, LPARRAY last_week_members)
     temp[sizeof(temp) - 1] = '\0';
 
     char* context_line = NULL;
-    char* line = strtok_s(temp, "\n", &context_line);
+    char* line = safe_strtok(temp, "\n", &context_line);
     int line_num = 0;
 
     while (line != NULL) {
         if (line_num == 0) {
-            line = strtok_s(NULL, "\n", &context_line);
+            line = safe_strtok(NULL, "\n", &context_line);
             line_num++;
             continue;
         }
 
         char* colon = strchr(line, ':');
         if (!colon) {
-            line = strtok_s(NULL, "\n", &context_line);
+            line = safe_strtok(NULL, "\n", &context_line);
             line_num++;
             continue;
         }
 
         char* names = colon + 1;
         char* context_name = NULL;
-        char* name_token = strtok_s(names, ",", &context_name);
+        char* name_token = safe_strtok(names, ",", &context_name);
 
         while (name_token) {
             // 앞뒤 공백 제거
@@ -100,10 +150,10 @@ int parse_members_from_text(const char* text, LPARRAY last_week_members)
             strcpy(member->name, name_token);
             arrayAdd(last_week_members, member);
 
-            name_token = strtok_s(NULL, ",", &context_name);
+            name_token = safe_strtok(NULL, ",", &context_name);
         }
 
-        line = strtok_s(NULL, "\n", &context_line);
+        line = safe_strtok(NULL, "\n", &context_line);
         line_num++;
     }
 
@@ -113,7 +163,8 @@ int parse_members_from_text(const char* text, LPARRAY last_week_members)
 // 배열에있는 이름을 1조 : 홍길동, ... 과 같이 바꾸어 합병
 char* merge_members_text(LPARRAY slack_members, int group_size)
 {
-    char* merge_text = (char*)malloc(2048);
+    int text_size = 2048;
+    char* merge_text = (char*)malloc(text_size);
     if (!merge_text) return NULL;
 
     merge_text[0] = '\0';  // 초기화
@@ -124,17 +175,17 @@ char* merge_members_text(LPARRAY slack_members, int group_size)
 
     for (int i = 0; i < slack_members->size; i++) {
         if (i % group_size == 0) {
-            offset += snprintf(merge_text + offset, 2048 - offset, "%d조 : ", group_num++);
+            offset += snprintf(merge_text + offset, text_size - offset, "%d조 : ", group_num++);
         }
 
         SlackMember* member = (SlackMember*)(slack_members->lpData[i]);
-        offset += snprintf(merge_text + offset, 2048 - offset, "%s", member->name);
+        offset += snprintf(merge_text + offset, text_size - offset, "%s", member->name);
 
         if ((i + 1) % group_size != 0 && i != slack_members->size - 1) {
-            offset += snprintf(merge_text + offset, 2048 - offset, ", ");
+            offset += snprintf(merge_text + offset, text_size - offset, ", ");
         }
         else {
-            offset += snprintf(merge_text + offset, 2048 - offset, "\n");
+            offset += snprintf(merge_text + offset, text_size - offset, "\n");
         }
     }
 
@@ -174,7 +225,7 @@ void request_API(SlackChannel* channels, LPARRAY slack_members, LPARRAY last_wee
 
     printf("선택된 채널: %s (ID: %s)\n", channels[choice].name, channels[choice].id);
 
-    slack_conversation_members(channels[choice].id, token, slack_members);
+    //slack_conversation_members(channels[choice].id, token, slack_members);
 
     slack_recent_message(channels[choice].id, token, last_week_members);
 
@@ -333,6 +384,11 @@ void slack_user_name_by_id(const char* user_id, const char* token, LPARRAY slack
         if (json_is_true(is_bot))
             return;
 
+        json_t* is_admin = json_object_get(user, "is_admin");
+
+        if (json_is_true(is_admin))
+            return;
+
         json_t* profile = json_object_get(user, "profile");
 
         if (!json_is_object(profile)) {
@@ -431,7 +487,7 @@ void slack_send_message(char* channel_id, const char* token, const char* text) {
 
     char post_data[1024];
     snprintf(post_data, sizeof(post_data),
-        "{\"channel\":\"%s\", \"text\":\"<!channel>\n이번주 랜밥멤버\n\n%s\"}", channel_id, text);
+        "{\"channel\":\"%s\", \"text\":\"%s\"}", channel_id, text);
 
     char* encoded = encoder(post_data, 1);
     if (encoded) {
