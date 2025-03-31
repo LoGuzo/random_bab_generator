@@ -204,28 +204,6 @@ void request_API(char* channel_id, SlackChannel* channels, LPARRAY slack_members
         return;
     }
 
-    if (!slack_fetch_channels(token, channels, &channel_count)) {
-        fprintf(stderr, "Take Channel Info Fail\n");
-        return;
-    }
-
-    //printf("\n[Slack Channel]\n");
-
-    //for (int i = 0; i < channel_count; i++) {
-    //    printf("%2d. %s\n", i, channels[i].name);
-    //}
-
-    //int choice;
-    //printf("\n=> input using channel number : ");
-    //scanf("%d", &choice);
-
-    //if (choice < 0 || choice >= channel_count) {
-    //    printf("wrong number.\n");
-    //    return;
-    //}
-
-    //printf("selected channel: %s (ID: %s)\n", channels[choice].name, channels[choice].id);
-
     slack_conversation_members(channel_id, token, slack_members);
 
     slack_recent_message(channel_id, token, last_week_members);
@@ -241,8 +219,27 @@ void request_API(char* channel_id, SlackChannel* channels, LPARRAY slack_members
 
 // txt파일에서 bot_token 추출
 char* get_token_from_file(const char* filename) {
-    FILE* file = fopen(filename, "r");
     static char token[256];
+    char fullpath[1024];
+
+#ifdef _WIN32
+    GetModuleFileNameA(NULL, fullpath, sizeof(fullpath));
+    char* last_slash = strrchr(fullpath, '\\');
+    if (last_slash) *(last_slash + 1) = '\0';  // 디렉토리만 남김
+    strcat(fullpath, "config.txt");
+#else
+    char path[1024];
+    ssize_t len = readlink("/proc/self/exe", path, sizeof(path) - 1);
+    if (len == -1) {
+        perror("실행 파일 경로 읽기 실패");
+        return NULL;
+    }
+    path[len] = '\0';
+    char* dir = dirname(path);
+    snprintf(fullpath, sizeof(fullpath), "%s/config.txt", dir);
+#endif
+
+    FILE* file = fopen(fullpath, "r");
     if (!file) {
         perror("Can't open config.txt");
         return NULL;
@@ -251,8 +248,9 @@ char* get_token_from_file(const char* filename) {
     char line[512];
     while (fgets(line, sizeof(line), file)) {
         if (strncmp(line, "SLACK_BOT_TOKEN=", 16) == 0) {
-            strncpy(token, line + 16, sizeof(token));
-            token[strcspn(token, "\n")] = '\0'; // 개행 제거
+            strncpy(token, line + 16, sizeof(token) - 1);
+            token[sizeof(token) - 1] = '\0';
+            token[strcspn(token, "\n")] = '\0';  // 개행 제거
             fclose(file);
             return token;
         }
@@ -260,80 +258,6 @@ char* get_token_from_file(const char* filename) {
 
     fclose(file);
     return NULL;
-}
-
-// 채널명 가져오기
-int slack_fetch_channels(const char* token, SlackChannel* channels, int* channel_count) {
-    CURL* curl = curl_easy_init();
-    struct curl_slist* headers = NULL;
-    struct string response;
-    init_string(&response);
-
-    if (!curl) {
-        fprintf(stderr, "curl Initalize Fail\n");
-        return 0;
-    }
-
-    char auth_header[300];
-    snprintf(auth_header, sizeof(auth_header), "Authorization: Bearer %s", token);
-    headers = curl_slist_append(headers, auth_header);
-
-    curl_easy_setopt(curl, CURLOPT_URL, "https://slack.com/api/conversations.list");
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunc);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
-
-    CURLcode res = curl_easy_perform(curl);
-    if (res != CURLE_OK) {
-        fprintf(stderr, "API Request Fail: %s\n", curl_easy_strerror(res));
-        curl_easy_cleanup(curl);
-        return 0;
-    }
-
-    // JSON 파싱
-    json_error_t error;
-    json_t* root = json_loads(response.ptr, 0, &error);
-    if (!root) {
-        fprintf(stderr, "JSON Parse Error: %s\n", error.text);
-        return 0;
-    }
-
-    json_t* ok = json_object_get(root, "ok");
-    if (!json_is_true(ok)) {
-        fprintf(stderr, "Slack API Call Fail: %s\n", response.ptr);
-        return 0;
-    }
-
-    json_t* chs = json_object_get(root, "channels");
-    if (!json_is_array(chs)) {
-        fprintf(stderr, "NO channels array\n");
-        return 0;
-    }
-
-    size_t index;
-    json_t* chan;
-    int i = 0;
-    json_array_foreach(chs, index, chan) {
-        const char* id = json_string_value(json_object_get(chan, "id"));
-        const char* name = json_string_value(json_object_get(chan, "name"));
-
-        if (id && name && i < MAX_CHANNELS) {
-            strncpy(channels[i].id, encoder(id, 0), sizeof(channels[i].id));;
-            strncpy(channels[i].name, encoder(name, 0), sizeof(channels[i].name));;
-            i++;
-        }
-    }
-
-    *channel_count = i;
-
-    curl_easy_cleanup(curl);
-    curl_slist_free_all(headers);
-    free(response.ptr);
-    json_decref(root);
-
-    return 1;
 }
 
 // 유저 id를 사용하여 유저의 이름 가져오기
