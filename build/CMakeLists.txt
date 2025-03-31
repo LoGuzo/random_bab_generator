@@ -13,6 +13,7 @@ if(CMAKE_SYSTEM MATCHES Windows)
                             ${SRC_DIR}/slack_api.c ${SRC_DIR}/shuffle.c)
 
   target_include_directories(Random_Bab PRIVATE ${INCLUDE_DIR})
+  target_link_directories(Random_Bab PRIVATE ${LIB_DIR})
   target_link_libraries(Random_Bab cJSON curl)
 endif()
 
@@ -27,8 +28,9 @@ if(CMAKE_SYSTEM MATCHES Linux)
   add_executable(Random_Bab ${SRC_DIR}/main.c ${SRC_DIR}/array.c
                             ${SRC_DIR}/slack_api.c ${SRC_DIR}/shuffle.c)
 
-  target_include_directories(Tutorial PRIVATE ${INCLUDE_DIR} /opt/local/include)
-  target_include_directories(Random_Bab PRIVATE ${INCLUDE_DIR})
+  target_include_directories(Random_Bab
+                             PRIVATE ${INCLUDE_DIR}/opt/local/include)
+  target_link_directories(Random_Bab PRIVATE ${LIB_DIR})
   target_link_libraries(Random_Bab cJSON curl)
 endif()
 
