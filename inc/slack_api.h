@@ -36,7 +36,6 @@ char* safe_strtok(char* str, const char* delim, char** context); // 멀티 플랫폼 
 // api 처리함수
 void request_API(char*, SlackChannel*, LPARRAY, LPARRAY); // api 요청 함수
 char* get_token_from_file(const char*); // bot_token 확인 함수
-int slack_fetch_channels(const char*, SlackChannel*, int*); // 채널 가져오기 함수
 void slack_user_name_by_id(const char*, const char*, LPARRAY); // id에서 이름 추출 함수
 void slack_conversation_members(const char*, const char*, LPARRAY); // 인원 추출 함수
 void slack_send_message(char*, const char*, const char*); // 메세지 보내기 함수
