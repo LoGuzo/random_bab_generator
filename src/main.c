@@ -1,5 +1,4 @@
 #include "array.h"
-#include "header.h"
 #include "shuffle.h"
 #include "slack_api.h"
 #include <stdlib.h>
@@ -16,7 +15,7 @@ int main(int argc, char *argv[]) {
   const char *names[] = {// 1조
                          "권병수", "장동철", "장현우", "남윤서",
                          // 2조
-                         "목경민", "추은호", "김민정",
+                         "목경민", "추은호", "김민정", "옹미령",
                          // 3조
                          "김경연", "조찬우", "손요셉", "조다빈",
                          // 4조

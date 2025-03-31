@@ -1,5 +1,5 @@
 #include "../inc/array.h"
-#include "../inc/header.h"
+#include <stdio.h>
 
 #ifndef SHUFFLE_H
 #define SHUFFLE_H
