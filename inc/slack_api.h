@@ -34,10 +34,10 @@ char* merge_members_text(LPARRAY, int); // text합병 함수
 char* safe_strtok(char* str, const char* delim, char** context); // 멀티 플랫폼 strtok함수
 
 // api 처리함수
-void request_API(char*, SlackChannel*, LPARRAY, LPARRAY); // api 요청 함수
+void request_API(char*, SlackChannel*, LPARRAY, LPARRAY, LPARRAY, int); // api 요청 함수
 char* get_token_from_file(const char*); // bot_token 확인 함수
-void slack_user_name_by_id(const char*, const char*, LPARRAY); // id에서 이름 추출 함수
-void slack_conversation_members(const char*, const char*, LPARRAY); // 인원 추출 함수
+void slack_user_name_by_id(const char*, const char*, LPARRAY, LPARRAY); // id에서 이름 추출 함수
+void slack_conversation_members(const char*, const char*, LPARRAY, LPARRAY); // 인원 추출 함수
 void slack_send_message(char*, const char*, const char*); // 메세지 보내기 함수
 void slack_recent_message(char*, const char*, LPARRAY); // 최근 메세지 가져오기 함수
 

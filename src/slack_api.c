@@ -195,7 +195,7 @@ char* merge_members_text(LPARRAY slack_members, int group_size)
 }
 
 // slack에 각 기능을 사용하기 위한 api 요청
-void request_API(char* channel_id, SlackChannel* channels, LPARRAY slack_members, LPARRAY last_week_members)
+void request_API(char* channel_id, SlackChannel* channels, LPARRAY slack_members, LPARRAY last_week_members, LPARRAY except_members, int group_size)
 {
     int channel_count = 0;
 
@@ -205,7 +205,7 @@ void request_API(char* channel_id, SlackChannel* channels, LPARRAY slack_members
         return;
     }
 
-    slack_conversation_members(channel_id, token, slack_members);
+    slack_conversation_members(channel_id, token, slack_members, except_members);
 
     slack_recent_message(channel_id, token, last_week_members);
 
@@ -262,7 +262,7 @@ char* get_token_from_file(const char* filename) {
 }
 
 // 유저 id를 사용하여 유저의 이름 가져오기
-void slack_user_name_by_id(const char* user_id, const char* token, LPARRAY slack_members) {
+void slack_user_name_by_id(const char* user_id, const char* token, LPARRAY slack_members, LPARRAY except_members) {
     CURL* curl = curl_easy_init();
     if (!curl) return;
 
@@ -322,15 +322,20 @@ void slack_user_name_by_id(const char* user_id, const char* token, LPARRAY slack
             return;
         }
         
-       SlackMember* member = (SlackMember*)malloc(sizeof(SlackMember));
-
         const char* name = json_string_value(json_object_get(profile, "display_name"));
         if (!name)
             name = json_string_value(json_object_get(profile, "real_name"));
 
-        //name = encoder(name, 0);
+        char* encod_name = encoder(name, 0);       
 
-        strcpy(member->name, encoder(name, 0));
+        for (int i = 0; i < except_members->size; i++) {
+            char* except_member = (char*)except_members->lpData[i];
+            if (!strcmp(encod_name, except_member))
+                return;
+        }
+
+        SlackMember* member = (SlackMember*)malloc(sizeof(SlackMember));
+        strcpy(member->name, encod_name);
 
         arrayAdd(slack_members, member);
 
@@ -344,7 +349,7 @@ void slack_user_name_by_id(const char* user_id, const char* token, LPARRAY slack
 }
 
 // 대화 채널 내 멤버들 아이디 가져오기
-void slack_conversation_members(const char* channel_id, const char* token, LPARRAY slack_members) {
+void slack_conversation_members(const char* channel_id, const char* token, LPARRAY slack_members, LPARRAY except_members) {
     CURL* curl = curl_easy_init();
     if (!curl) return;
 
@@ -392,7 +397,7 @@ void slack_conversation_members(const char* channel_id, const char* token, LPARR
         json_array_foreach(members, index, member) {
             const char* user_id = json_string_value(member);
             if (user_id) {
-                slack_user_name_by_id(user_id, token, slack_members); // 밑에 정의될 함수
+                slack_user_name_by_id(user_id, token, slack_members, except_members); // 밑에 정의될 함수
             }
         }
         json_decref(root);
@@ -452,7 +457,7 @@ void slack_recent_message(char* channel_id, const char* token, LPARRAY last_week
     if (!curl) return;
 
     char url[512];
-    snprintf(url, sizeof(url), "https://slack.com/api/conversations.history?channel=%s&limit=1", channel_id);
+    snprintf(url, sizeof(url), "https://slack.com/api/conversations.history?channel=%s&limit=5", channel_id);
 
     struct curl_slist* headers = NULL;
     struct string response;
@@ -489,15 +494,16 @@ void slack_recent_message(char* channel_id, const char* token, LPARRAY last_week
             fprintf(stderr, "NO message array\n");
             return;
         }
-        const char* text = json_string_value(json_object_get(messages, "text"));
 
         size_t index;
         json_t* texts;
         json_array_foreach(messages, index, texts) {
             const char* text = json_string_value(json_object_get(texts, "text"));
-            if (text) {
-                text = encoder(text, 0);
+
+            text = encoder(text, 0);
+            if (text && strstr(text, "#1")) {
                 parse_members_from_text(text, last_week_members);
+                break;  // 첫 번째 !channel 메시지만 처리하고 종료
             }
         }
 
