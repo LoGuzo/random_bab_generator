@@ -194,7 +194,7 @@ char* merge_members_text(LPARRAY slack_members, int group_size)
 }
 
 // slack에 각 기능을 사용하기 위한 api 요청
-void request_API(SlackChannel* channels, LPARRAY slack_members, LPARRAY last_week_members)
+void request_API(char* channel_id, SlackChannel* channels, LPARRAY slack_members, LPARRAY last_week_members)
 {
     int channel_count = 0;
 
@@ -209,31 +209,31 @@ void request_API(SlackChannel* channels, LPARRAY slack_members, LPARRAY last_wee
         return;
     }
 
-    printf("\n[Slack Channel]\n");
+    //printf("\n[Slack Channel]\n");
 
-    for (int i = 0; i < channel_count; i++) {
-        printf("%2d. %s\n", i, channels[i].name);
-    }
+    //for (int i = 0; i < channel_count; i++) {
+    //    printf("%2d. %s\n", i, channels[i].name);
+    //}
 
-    int choice;
-    printf("\n=> input using channel number : ");
-    scanf("%d", &choice);
+    //int choice;
+    //printf("\n=> input using channel number : ");
+    //scanf("%d", &choice);
 
-    if (choice < 0 || choice >= channel_count) {
-        printf("wrong number.\n");
-        return;
-    }
+    //if (choice < 0 || choice >= channel_count) {
+    //    printf("wrong number.\n");
+    //    return;
+    //}
 
-    printf("selected channel: %s (ID: %s)\n", channels[choice].name, channels[choice].id);
+    //printf("selected channel: %s (ID: %s)\n", channels[choice].name, channels[choice].id);
 
-    slack_conversation_members(channels[choice].id, token, slack_members);
+    slack_conversation_members(channel_id, token, slack_members);
 
-    slack_recent_message(channels[choice].id, token, last_week_members);
+    slack_recent_message(channel_id, token, last_week_members);
 
     assign_memeber(slack_members, last_week_members, 4);
 
     char* merge_text = merge_members_text(slack_members, 4);
-    slack_send_message(channels[choice].id, token, merge_text);
+    slack_send_message(channel_id, token, merge_text);
 
     free(merge_text);
     return;
