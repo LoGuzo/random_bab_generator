@@ -4,6 +4,7 @@
 #include "../inc/shuffle.h"
 #include "../inc/slack_api.h"
 
+// 저번주와 안겹치게 조 나누기
 void assign_memeber(LPARRAY member, LPARRAY last_week_member, int group_size)
 {
     srand(time(NULL));
@@ -13,6 +14,7 @@ void assign_memeber(LPARRAY member, LPARRAY last_week_member, int group_size)
     } while (has_group_overlap(member, last_week_member, group_size));
 }
 
+// 번호 섞기
 void shuffle_member(LPARRAY array) {
     for (int i = array->size - 1; i > 0; i--) {
         int j = rand() % (i + 1);
@@ -20,12 +22,14 @@ void shuffle_member(LPARRAY array) {
     }
 }
 
+// 배열 데이터 스왑
 void swap(LPDATA* name1, LPDATA* name2) {
     LPDATA temp = *name1;
     *name1 = *name2;
     *name2 = temp;
 }
 
+// 겹치는 사람 있는지 확인
 int has_group_overlap(LPARRAY members, LPARRAY last_week_members, int group_size)
 {
     int group_count = (members->size + group_size - 1) / group_size;
