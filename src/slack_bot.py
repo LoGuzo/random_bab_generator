@@ -97,7 +97,6 @@ def custom_command_function(ack, respond, command):
     client.chat_postMessage(
         channel=channel_id, text=formatted_message
     )  # Send to channel
-    client.chat_postMessage(channel=channel_id, text="End Chat\n")
 
 
 # Start Slack Bot in Socket Mode
