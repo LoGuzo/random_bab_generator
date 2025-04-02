@@ -26,7 +26,7 @@ client = WebClient(token=BOT_TOKEN)
 
 
 # Function to execute your C program and get results
-def run_c_program(channel_id):
+def run_c_program():
     try:
         build_directory = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "..", "build"
@@ -34,9 +34,7 @@ def run_c_program(channel_id):
 
         # Run the program from the 'build' directory
         result = subprocess.run(
-            [os.path.join(build_directory, "Random_Bab"), channel_id],
-            capture_output=True,
-            text=True,
+            [os.path.join(build_directory, "Tutorial")], capture_output=True, text=True
         )
 
         if result.returncode == 0:
@@ -60,8 +58,7 @@ def is_manager(user_id):
 
             # Check if any of these fields contain "manager" or "매니저"
             # keywords = ["manager", "매니저"]
-            # keywords = ["admin"]
-            keywords = ["조"]
+            keywords = ["admin"]
             if any(
                 keyword in real_name or keyword in display_name or keyword in title
                 for keyword in keywords
@@ -74,7 +71,7 @@ def is_manager(user_id):
 
 
 # Slash Command Handler
-@app.command("/randbab")
+@app.command("/testing")
 def custom_command_function(ack, respond, command):
     ack()  # Acknowledge Slack request
 
@@ -89,14 +86,15 @@ def custom_command_function(ack, respond, command):
         return
 
     # Run the C program if authorized
-    output = run_c_program(channel_id)
+    output = run_c_program()
 
     # Send the message to the whole channel
     client.chat_postMessage(channel=channel_id, text="<!channel>")
-    formatted_message = f"👥 *이번 주 랜덤밥🍚:*\n{output}"
+    formatted_message = f"👥 *Group Generation Result:*\n```{output}```"
     client.chat_postMessage(
         channel=channel_id, text=formatted_message
     )  # Send to channel
+    client.chat_postMessage(channel=channel_id, text="End Chat\n")
 
 
 # Start Slack Bot in Socket Mode

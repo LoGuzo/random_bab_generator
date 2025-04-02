@@ -1,46 +1,53 @@
-#include "array.h"
-#include "shuffle.h"
-#include "slack_api.h"
-#include <stdlib.h>
+#include "../inc/array.h"
+#include "../inc/header.h"
+#include "../inc/shuffle.h"
+#include "../inc/slack_api.h"
 #include <string.h>
+#include <stdlib.h>
 
 int main(int argc, char *argv[]) {
-  LPARRAY members;
-  LPARRAY lastweak_group_members;
-  SlackChannel channels[ARRAR_INIT_SIZE];
+	int group_size = 0;
+	LPARRAY members;
+	LPARRAY except_members;
+	LPARRAY lastweak_group_members;
+	SlackChannel channels[ARRAR_INIT_SIZE];
 
-  arrayCreate(&members);
-  arrayCreate(&lastweak_group_members);
+	arrayCreate(&members);
+	arrayCreate(&except_members);
+	arrayCreate(&lastweak_group_members);
 
-  const char *names[] = {// 1ì¡°
-                         "ê¶Œë³‘ìˆ˜", "ì¥ë™ì² ", "ì¥í˜„ìš°", "ë‚¨ìœ¤ì„œ",
-                         // 2ì¡°
-                         "ëª©ê²½ë¯¼", "ì¶”ì€í˜¸", "ê¹€ë¯¼ì •", "ì˜¹ë¯¸ë ¹",
-                         // 3ì¡°
-                         "ê¹€ê²½ì—°", "ì¡°ì°¬ìš°", "ì†ìš”ì…‰", "ì¡°ë‹¤ë¹ˆ",
-                         // 4ì¡°
-                         "ì´ê¸°ì°½", "ê°•ì‹œí™˜", "ìœ¤ì˜ë‘",
-                         // 5ì¡°
-                         "ì¡°ìˆ˜ë¹ˆ", "í™©ì£¼í˜¸", "í•œì˜ì„œ", "ì˜¤ìƒì¤€",
-                         // 6ì¡°
-                         "ê¹€ìœ ì„ ", "ì´í˜„ì§€", "ì¡°ì •í˜„", "ì„œìœ ì§„",
-                         // 7ì¡°
-                         "ê¹€ë„í˜„", "ë¬¸ì˜ˆì„±", "ë¥˜ì˜ˆì§€", "ì´ì¬í˜•"};
-  const int count = sizeof(names) / sizeof(names[0]);
-  for (int i = 0; i < count; i++) {
-    SlackMember *member = malloc(sizeof(SlackMember));
-    if (!member) {
-      fprintf(stderr, "ë©”ëª¨ë¦¬ í• ë‹¹ ì‹¤íŒ¨\n");
-      exit(1);
-    }
-    strncpy(member->name, names[i], sizeof(member->name) - 1);
-    member->name[sizeof(member->name) - 1] = '\0';
-    arrayAdd(members, (LPDATA)member);
-  }
+    //const char* names[] = {// 1Á¶
+    //                     "±Çº´¼ö", "Àåµ¿Ã¶", "ÀåÇö¿ì", "³²À±¼­",
+    //                     // 2Á¶
+    //                     "¸ñ°æ¹Î", "ÃßÀºÈ£", "±è¹ÎÁ¤", "¿Ë¹Ì·É",
+    //                     // 3Á¶
+    //                     "±è°æ¿¬", "Á¶Âù¿ì", "¼Õ¿ä¼Á", "Á¶´Ùºó",
+    //                     // 4Á¶
+    //                     "ÀÌ±âÃ¢", "°­½ÃÈ¯", "À±¿µµÎ",
+    //                     // 5Á¶
+    //                     "Á¶¼öºó", "È²ÁÖÈ£", "ÇÑ¿µ¼­", "¿À»óÁØ",
+    //                     // 6Á¶
+    //                     "±èÀ¯¼±", "ÀÌÇöÁö", "Á¶Á¤Çö", "¼­À¯Áø",
+    //                     // 7Á¶
+    //                     "±èµµÇö", "¹®¿¹¼º", "·ù¿¹Áö", "ÀÌÀçÇü" };
+    //const int count = sizeof(names) / sizeof(names[0]);
+    //for (int i = 0; i < count; i++) {
+    //    SlackMember* member = malloc(sizeof(SlackMember));
+    //    if (!member) {
+    //        fprintf(stderr, "¸Ş¸ğ¸® ÇÒ´ç ½ÇÆĞ\n");
+    //        exit(1);
+    //    }
+    //    strncpy(member->name, names[i], sizeof(member->name) - 1);
+    //    member->name[sizeof(member->name) - 1] = '\0';
+    //    arrayAdd(members, (LPDATA)member);
+    //}
 
-  request_API(argv[1], channels, members, lastweak_group_members);
+	arrayAdd(except_members, "chk");
 
-  arrayDestroy(members);
-  arrayDestroy(lastweak_group_members);
-  return 0;
+	request_API("C08K4LEULF4", channels, members, lastweak_group_members, except_members, group_size);
+
+	arrayDestroy(members);
+	arrayDestroy(except_members);
+	arrayDestroy(lastweak_group_members);
+	return 0;
 }

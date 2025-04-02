@@ -7,7 +7,6 @@ lib/
 *.vcxproj
 *.filters
 *.user
-Random_Bab
 
 # Created by https://www.toptal.com/developers/gitignore/api/cmake
 # Edit at https://www.toptal.com/developers/gitignore?templates=cmake
@@ -37,3 +36,4 @@ CMakeUserPresets.json
 
 .env
 .venv
+*.txt

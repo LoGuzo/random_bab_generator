@@ -49,5 +49,5 @@ if(CMAKE_SYSTEM MATCHES Darwin)
                                                 /opt/homebrew/include)
 
   target_link_directories(Random_Bab PRIVATE ${LIB_DIR})
-  target_link_libraries(Random_Bab jansson curl)
+  target_link_libraries(Random_Bab cJSON curl)
 endif()
