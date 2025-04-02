@@ -1,0 +1,45 @@
+{
+    "display_information": {
+        "name": "Random Bab",
+        "background_color": "#A39B84"
+    },
+    "features": {
+        "bot_user": {
+            "display_name": "Random Bab",
+            "always_online": false
+        },
+        "slash_commands": [
+            {
+                "command": "/randbab",
+                "description": "랜덤 밥 생성",
+                "usage_hint": "/randbab 그룹 사이즈, 제외 할 멤버",
+                "should_escape": false
+            }
+        ]
+    },
+    "oauth_config": {
+        "redirect_urls": [
+            "https://127.0.0.1:5000/slack/oauth"
+        ],
+        "scopes": {
+            "bot": [
+                "channels:history",
+                "channels:read",
+                "chat:write",
+                "groups:history",
+                "groups:read",
+                "users.profile:read",
+                "users:read",
+                "commands"
+            ]
+        }
+    },
+    "settings": {
+        "interactivity": {
+            "is_enabled": true
+        },
+        "org_deploy_enabled": false,
+        "socket_mode_enabled": true,
+        "token_rotation_enabled": false
+    }
+}

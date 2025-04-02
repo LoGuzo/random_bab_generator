@@ -8,4 +8,5 @@ Libraries :
 
 ## _Slack API Integration_
 
-Libraries : curl, jansson
+Libraries for C : curl, jansson
+Modules for python3 : slack-bolt slack-sdk python-dotenv

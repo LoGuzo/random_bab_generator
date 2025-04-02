@@ -32,12 +32,20 @@ def run_c_program(channel_id, group_size, names):
             os.path.dirname(os.path.abspath(__file__)), "..", "build"
         )
 
-        # Run the program from the 'build' directory
-        command_args = [
-            os.path.join(build_directory, "Random_Bab"),
-            channel_id,
-            group_size,
-        ] + names
+        # Construct the command arguments
+        command_args = [os.path.join(build_directory, "Random_Bab"), channel_id]
+
+        if group_size is not None:
+            command_args.append(group_size)
+        else:
+            command_args.append("4")  # Default group size
+
+        if names:
+            command_args.extend(names)
+        else:
+            command_args.append("")  # Placeholder to indicate no names provided
+
+        # Run the program with the arguments
         result = subprocess.run(command_args, capture_output=True, text=True)
 
         if result.returncode == 0:
@@ -89,19 +97,21 @@ def custom_command_function(ack, respond, command):
         )
         return
 
-    # Parse command text
-    args = command_text.split()  # Split by spaces
+    # Default values
+    group_size = None
+    names = []
 
-    try:
-        group_size = args[0]  # First argument is group size
-        names = args[1:]  # Remaining arguments are names
-    except ValueError:
-        respond("⚠️ Invalid group size. Please provide a number.")
-        return
+    if command_text:  # If arguments are provided
+        args = command_text.split()
 
-    # Run the C program with the extracted arguments
-    for i in args:
-        print(f"{i}\n")
+        if args[0].isdigit():  # First argument is a number (group size)
+            group_size = args[0]  # Extract group size
+            names = args[1:]  # Remaining args are names (if any)
+        else:  # First argument is a name (no group size provided)
+            group_size = None  # Use default group size in C program
+            names = args  # Treat all arguments as names
+
+    # Run the C program with extracted or default arguments
     output = run_c_program(channel_id, group_size, names)
 
     # Send the message to the whole channel
