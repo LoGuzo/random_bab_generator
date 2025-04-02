@@ -26,16 +26,19 @@ client = WebClient(token=BOT_TOKEN)
 
 
 # Function to execute your C program and get results
-def run_c_program():
+def run_c_program(channel_id, group_size, names):
     try:
         build_directory = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "..", "build"
         )
 
         # Run the program from the 'build' directory
-        result = subprocess.run(
-            [os.path.join(build_directory, "Tutorial")], capture_output=True, text=True
-        )
+        command_args = [
+            os.path.join(build_directory, "Random_Bab"),
+            channel_id,
+            group_size,
+        ] + names
+        result = subprocess.run(command_args, capture_output=True, text=True)
 
         if result.returncode == 0:
             return result.stdout.strip()
@@ -58,7 +61,7 @@ def is_manager(user_id):
 
             # Check if any of these fields contain "manager" or "매니저"
             # keywords = ["manager", "매니저"]
-            keywords = ["admin"]
+            keywords = ["오"]
             if any(
                 keyword in real_name or keyword in display_name or keyword in title
                 for keyword in keywords
@@ -71,12 +74,13 @@ def is_manager(user_id):
 
 
 # Slash Command Handler
-@app.command("/testing")
+@app.command("/randbab")
 def custom_command_function(ack, respond, command):
     ack()  # Acknowledge Slack request
 
     user_id = command["user_id"]
     channel_id = command["channel_id"]  # Get the channel where the command was used
+    command_text = command["text"].strip()  # Extract command text
 
     # Check if the user is a manager
     if not is_manager(user_id):
@@ -85,16 +89,25 @@ def custom_command_function(ack, respond, command):
         )
         return
 
-    # Run the C program if authorized
-    output = run_c_program()
+    # Parse command text
+    args = command_text.split()  # Split by spaces
+
+    try:
+        group_size = args[0]  # First argument is group size
+        names = args[1:]  # Remaining arguments are names
+    except ValueError:
+        respond("⚠️ Invalid group size. Please provide a number.")
+        return
+
+    # Run the C program with the extracted arguments
+    for i in args:
+        print(f"{i}\n")
+    output = run_c_program(channel_id, group_size, names)
 
     # Send the message to the whole channel
     client.chat_postMessage(channel=channel_id, text="<!channel>")
-    formatted_message = f"👥 *Group Generation Result:*\n```{output}```"
-    client.chat_postMessage(
-        channel=channel_id, text=formatted_message
-    )  # Send to channel
-    client.chat_postMessage(channel=channel_id, text="End Chat\n")
+    formatted_message = f"👥 *이번 주 랜덤밥🍚:*\n{output}"
+    client.chat_postMessage(channel=channel_id, text=formatted_message)
 
 
 # Start Slack Bot in Socket Mode
