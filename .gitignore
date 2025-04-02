@@ -36,3 +36,4 @@ CMakeUserPresets.json
 
 .env
 .venv
+*.txt
