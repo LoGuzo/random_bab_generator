@@ -8,18 +8,13 @@
 
 #ifdef _WIN32
 #include <windows.h>
-#elif __APPLE__
+#else
 #include <libgen.h>
 #include <limits.h>
 #include <locale.h>
 #include <mach-o/dyld.h>
 #include <unistd.h>
 #include <wchar.h>
-#else
-#include <libgen.h>
-#include <limits.h>
-#include <linux/limits.h>
-#include <unistd.h>
 #endif
 
 // string 초기화
@@ -213,12 +208,6 @@ void request_API(char *channel_id, SlackChannel *channels,
                  LPARRAY except_members, int group_size, const char *token) {
   int channel_count = 0;
 
-  // const char *token = get_token_from_file("config.txt");
-  // if (!token) {
-  //   fprintf(stderr, "Can't read token\n");
-  //   return;
-  // }
-
   slack_conversation_members(channel_id, token, slack_members, except_members);
 
   slack_recent_message(channel_id, token, last_week_members);
@@ -230,58 +219,6 @@ void request_API(char *channel_id, SlackChannel *channels,
 
   free(merge_text);
   return;
-}
-
-// txt파일에서 bot_token 추출
-char *get_token_from_file(const char *filename) {
-  static char token[256];
-  char fullpath[PATH_MAX];
-  char exe_path[PATH_MAX];
-
-#ifdef _WIN32
-  GetModuleFileNameA(NULL, fullpath, sizeof(fullpath));
-  char *last_slash = strrchr(fullpath, '\\');
-  if (last_slash)
-    *(last_slash + 1) = '\0'; // 디렉토리만 남김
-  strcat(fullpath, "config.txt");
-#elif __APPLE__
-  // char path[1024];
-  // getcwd(path, sizeof(path));
-  uint32_t size = sizeof(exe_path);
-  if (_NSGetExecutablePath(exe_path, &size) == 0) {
-    char *dir = dirname(exe_path);
-    snprintf(fullpath, sizeof(fullpath), "%s/config.txt", dir);
-  }
-#else
-  ssize_t len = readlink("/proc/self/exe", exe_path, sizeof(exe_path) - 1);
-  if (len == -1) {
-    perror("readlink failed");
-    exit(-1);
-  }
-  exe_path[len] = '\0';
-  char *dir = dirname(exe_path);
-  snprintf(fullpath, sizeof(fullpath), "%s/config.txt", dir);
-#endif
-
-  FILE *file = fopen(fullpath, "r+");
-  if (!file) {
-    perror("Can't open config.txt");
-    return NULL;
-  }
-
-  char line[512];
-  while (fgets(line, sizeof(line), file)) {
-    if (strncmp(line, "SLACK_BOT_TOKEN=", 16) == 0) {
-      strncpy(token, line + 16, sizeof(token) - 1);
-      token[sizeof(token) - 1] = '\0';
-      token[strcspn(token, "\n")] = '\0'; // 개행 제거
-      fclose(file);
-      return token;
-    }
-  }
-
-  fclose(file);
-  return NULL;
 }
 
 // 유저 id를 사용하여 유저의 이름 가져오기
