@@ -8,11 +8,18 @@
 
 #ifdef _WIN32
 #include <windows.h>
-#else
+#elif __APPLE__
 #include <libgen.h>
+#include <limits.h>
 #include <locale.h>
+#include <mach-o/dyld.h>
 #include <unistd.h>
 #include <wchar.h>
+#else
+#include <libgen.h>
+#include <limits.h>
+#include <linux/limits.h>
+#include <unistd.h>
 #endif
 
 // string 초기화
@@ -203,14 +210,14 @@ char *merge_members_text(LPARRAY slack_members, int group_size) {
 // slack에 각 기능을 사용하기 위한 api 요청
 void request_API(char *channel_id, SlackChannel *channels,
                  LPARRAY slack_members, LPARRAY last_week_members,
-                 LPARRAY except_members, int group_size) {
+                 LPARRAY except_members, int group_size, const char *token) {
   int channel_count = 0;
 
-  const char *token = get_token_from_file("config.txt");
-  if (!token) {
-    fprintf(stderr, "Can't read token\n");
-    return;
-  }
+  // const char *token = get_token_from_file("config.txt");
+  // if (!token) {
+  //   fprintf(stderr, "Can't read token\n");
+  //   return;
+  // }
 
   slack_conversation_members(channel_id, token, slack_members, except_members);
 
@@ -228,7 +235,8 @@ void request_API(char *channel_id, SlackChannel *channels,
 // txt파일에서 bot_token 추출
 char *get_token_from_file(const char *filename) {
   static char token[256];
-  char fullpath[1024];
+  char fullpath[PATH_MAX];
+  char exe_path[PATH_MAX];
 
 #ifdef _WIN32
   GetModuleFileNameA(NULL, fullpath, sizeof(fullpath));
@@ -236,13 +244,26 @@ char *get_token_from_file(const char *filename) {
   if (last_slash)
     *(last_slash + 1) = '\0'; // 디렉토리만 남김
   strcat(fullpath, "config.txt");
+#elif __APPLE__
+  // char path[1024];
+  // getcwd(path, sizeof(path));
+  uint32_t size = sizeof(exe_path);
+  if (_NSGetExecutablePath(exe_path, &size) == 0) {
+    char *dir = dirname(exe_path);
+    snprintf(fullpath, sizeof(fullpath), "%s/config.txt", dir);
+  }
 #else
-  char path[1024];
-  getcwd(path, sizeof(path));
-  snprintf(fullpath, sizeof(fullpath), "%s/build/config.txt", path);
+  ssize_t len = readlink("/proc/self/exe", exe_path, sizeof(exe_path) - 1);
+  if (len == -1) {
+    perror("readlink failed");
+    exit(-1);
+  }
+  exe_path[len] = '\0';
+  char *dir = dirname(exe_path);
+  snprintf(fullpath, sizeof(fullpath), "%s/config.txt", dir);
 #endif
 
-  FILE *file = fopen(fullpath, "r");
+  FILE *file = fopen(fullpath, "r+");
   if (!file) {
     perror("Can't open config.txt");
     return NULL;

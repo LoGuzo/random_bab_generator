@@ -26,14 +26,15 @@ client = WebClient(token=BOT_TOKEN)
 
 
 # Function to execute your C program and get results
-def run_c_program(channel_id, group_size, names):
+def run_c_program(channel_id, token, group_size, names):
     try:
         build_directory = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "..", "build"
         )
 
         # Construct the command arguments
-        command_args = [os.path.join(build_directory, "Random_Bab"), channel_id]
+        command_args = [os.path.join(build_directory, "Random_Bab"), channel_id, token]
+        print(command_args)
 
         if group_size is not None:
             command_args.append(group_size)
@@ -112,7 +113,7 @@ def custom_command_function(ack, respond, command):
             names = args  # Treat all arguments as names
 
     # Run the C program with extracted or default arguments
-    output = run_c_program(channel_id, group_size, names)
+    output = run_c_program(channel_id, BOT_TOKEN, group_size, names)
 
     # Send the message to the whole channel
     client.chat_postMessage(channel=channel_id, text="<!channel>")
