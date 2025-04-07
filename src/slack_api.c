@@ -17,7 +17,7 @@
 #include <wchar.h>
 #endif
 
-// string ÃÊ±âÈ­
+// string ì´ˆê¸°í™”
 void init_string(struct string *s) {
   s->len = 0;
   s->ptr = malloc(1);
@@ -29,14 +29,14 @@ void init_string(struct string *s) {
 }
 
 char *safe_strtok(char *str, const char *delim, char **context) {
-#ifdef _WIN32
+#ifdef _MSC_VER
   return strtok_s(str, delim, context);
 #else
   return strtok_r(str, delim, context);
 #endif
 }
 
-// ÀÎÄÚ´õ 1 ÀÔ·Â½Ã ACP->UTF8, 0 ÀÔ·Â½Ã UTF8 -> ACP
+// ì¸ì½”ë” 1 ì…ë ¥ì‹œ ACP->UTF8, 0 ì…ë ¥ì‹œ UTF8 -> ACP
 char *encoder(const char *input, int encode) {
 #ifdef _WIN32
   int from = (encode == 1) ? CP_ACP : CP_UTF8;
@@ -70,10 +70,10 @@ char *encoder(const char *input, int encode) {
 
 #else // Linux, Unix
 
-  // ·ÎÄ¶ ¼¼ÆÃ (ÇÑ ¹ø¸¸ È£ÃâÇØµµ ¹«¹æÇÏ±ä ÇÔ)
+  // ë¡œìº˜ ì„¸íŒ… (í•œ ë²ˆë§Œ í˜¸ì¶œí•´ë„ ë¬´ë°©í•˜ê¸´ í•¨)
   setlocale(LC_ALL, "");
 
-  // Step 1: ¸ÖÆ¼¹ÙÀÌÆ® ¡æ ¿ÍÀÌµå
+  // Step 1: ë©€í‹°ë°”ì´íŠ¸ â†’ ì™€ì´ë“œ
   size_t wlen = mbstowcs(NULL, input, 0);
   if (wlen == (size_t)-1)
     return NULL;
@@ -84,7 +84,7 @@ char *encoder(const char *input, int encode) {
 
   mbstowcs(wstr, input, wlen + 1);
 
-  // Step 2: ¿ÍÀÌµå ¡æ ¸ÖÆ¼¹ÙÀÌÆ® (´Ù¸¥ ¹æÇâ)
+  // Step 2: ì™€ì´ë“œ â†’ ë©€í‹°ë°”ì´íŠ¸ (ë‹¤ë¥¸ ë°©í–¥)
   size_t mblen = wcstombs(NULL, wstr, 0);
   if (mblen == (size_t)-1) {
     free(wstr);
@@ -105,7 +105,7 @@ char *encoder(const char *input, int encode) {
 #endif
 }
 
-// jsonÆÄÀÏ ÆÄ½Ì½Ã »ç¿ëÇÒ wirtefunc Á¦ÀÛ
+// jsoníŒŒì¼ íŒŒì‹±ì‹œ ì‚¬ìš©í•  wirtefunc ì œì‘
 size_t writefunc(void *ptr, size_t size, size_t nmemb, struct string *s) {
   size_t new_len = s->len + size * nmemb;
   s->ptr = realloc(s->ptr, new_len + 1);
@@ -119,7 +119,7 @@ size_t writefunc(void *ptr, size_t size, size_t nmemb, struct string *s) {
   return size * nmemb;
 }
 
-// ÅØ½ºÆ®¿¡¼­ ÀÎ¿øÀ» ÃßÃâ
+// í…ìŠ¤íŠ¸ì—ì„œ ì¸ì›ì„ ì¶”ì¶œ
 int parse_members_from_text(const char *text, LPARRAY last_week_members) {
   char temp[2048];
   strncpy(temp, text, sizeof(temp) - 1);
@@ -148,7 +148,7 @@ int parse_members_from_text(const char *text, LPARRAY last_week_members) {
     char *name_token = safe_strtok(names, ",", &context_name);
 
     while (name_token) {
-      // ¾ÕµÚ °ø¹é Á¦°Å
+      // ì•ë’¤ ê³µë°± ì œê±°
       while (*name_token == ' ')
         name_token++;
       char *end = name_token + strlen(name_token) - 1;
@@ -169,14 +169,14 @@ int parse_members_from_text(const char *text, LPARRAY last_week_members) {
   return 0;
 }
 
-// ¹è¿­¿¡ÀÖ´Â ÀÌ¸§À» 1Á¶ : È«±æµ¿, ... °ú °°ÀÌ ¹Ù²Ù¾î ÇÕº´
+// ë°°ì—´ì—ìˆëŠ” ì´ë¦„ì„ 1ì¡° : í™ê¸¸ë™, ... ê³¼ ê°™ì´ ë°”ê¾¸ì–´ í•©ë³‘
 char *merge_members_text(LPARRAY slack_members, int group_size) {
   int text_size = 2048;
   char *merge_text = (char *)malloc(text_size);
   if (!merge_text)
     return NULL;
 
-  merge_text[0] = '\0'; // ÃÊ±âÈ­
+  merge_text[0] = '\0'; // ì´ˆê¸°í™”
 
   int group_cnt = (slack_members->size + group_size - 1) / group_size;
   int offset = 0;
@@ -202,7 +202,7 @@ char *merge_members_text(LPARRAY slack_members, int group_size) {
   return merge_text;
 }
 
-// slack¿¡ °¢ ±â´ÉÀ» »ç¿ëÇÏ±â À§ÇÑ api ¿äÃ»
+// slackì— ê° ê¸°ëŠ¥ì„ ì‚¬ìš©í•˜ê¸° ìœ„í•œ api ìš”ì²­
 void request_API(char *channel_id, SlackChannel *channels,
                  LPARRAY slack_members, LPARRAY last_week_members,
                  LPARRAY except_members, int group_size, const char *token) {
@@ -221,7 +221,7 @@ void request_API(char *channel_id, SlackChannel *channels,
   return;
 }
 
-// À¯Àú id¸¦ »ç¿ëÇÏ¿© À¯ÀúÀÇ ÀÌ¸§ °¡Á®¿À±â
+// ìœ ì € idë¥¼ ì‚¬ìš©í•˜ì—¬ ìœ ì €ì˜ ì´ë¦„ ê°€ì ¸ì˜¤ê¸°
 void slack_user_name_by_id(const char *user_id, const char *token,
                            LPARRAY slack_members, LPARRAY except_members) {
   CURL *curl = curl_easy_init();
@@ -312,7 +312,7 @@ void slack_user_name_by_id(const char *user_id, const char *token,
   free(response.ptr);
 }
 
-// ´ëÈ­ Ã¤³Î ³» ¸â¹öµé ¾ÆÀÌµğ °¡Á®¿À±â
+// ëŒ€í™” ì±„ë„ ë‚´ ë©¤ë²„ë“¤ ì•„ì´ë”” ê°€ì ¸ì˜¤ê¸°
 void slack_conversation_members(const char *channel_id, const char *token,
                                 LPARRAY slack_members, LPARRAY except_members) {
   CURL *curl = curl_easy_init();
@@ -366,7 +366,7 @@ void slack_conversation_members(const char *channel_id, const char *token,
       const char *user_id = json_string_value(member);
       if (user_id) {
         slack_user_name_by_id(user_id, token, slack_members,
-                              except_members); // ¹Ø¿¡ Á¤ÀÇµÉ ÇÔ¼ö
+                              except_members); // ë°‘ì— ì •ì˜ë  í•¨ìˆ˜
       }
     }
     json_decref(root);
@@ -378,7 +378,7 @@ void slack_conversation_members(const char *channel_id, const char *token,
   free(response.ptr);
 }
 
-// ÇÕº´Çß´ø text¸¦ slack¿¡ Àü¼Û
+// í•©ë³‘í–ˆë˜ textë¥¼ slackì— ì „ì†¡
 void slack_send_message(char *channel_id, const char *token, const char *text) {
   CURL *curl = curl_easy_init();
   if (!curl)
@@ -422,7 +422,7 @@ void slack_send_message(char *channel_id, const char *token, const char *text) {
   curl_easy_cleanup(curl);
 }
 
-// ÃÖ±Ù ¸Ş¼¼Áö °¡Á®¿À±â
+// ìµœê·¼ ë©”ì„¸ì§€ ê°€ì ¸ì˜¤ê¸°
 void slack_recent_message(char *channel_id, const char *token,
                           LPARRAY last_week_members) {
   CURL *curl = curl_easy_init();
@@ -478,7 +478,7 @@ void slack_recent_message(char *channel_id, const char *token,
       text = encoder(text, 0);
       if (text && strstr(text, "#1")) {
         parse_members_from_text(text, last_week_members);
-        break; // Ã¹ ¹øÂ° !channel ¸Ş½ÃÁö¸¸ Ã³¸®ÇÏ°í Á¾·á
+        break; // ì²« ë²ˆì§¸ !channel ë©”ì‹œì§€ë§Œ ì²˜ë¦¬í•˜ê³  ì¢…ë£Œ
       }
     }
 
