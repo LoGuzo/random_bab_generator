@@ -85,13 +85,13 @@ Random_bab_generator/
     └── .env
 ```
 
-    1.	Run slack_bot.py — it waits for a command via socket communication with your Slack workspace.
+1. Run slack_bot.py — it waits for a command via socket communication with your Slack workspace.
 
-    2.	When the command is received, the Python program passes the arguments to the C program.
+2. When the command is received, the Python program passes the arguments to the C program.
 
-    3.	The C program handles the grouping logic and prints the result.
+3. The C program handles the grouping logic and prints the result.
 
-    4.	slack_bot.py sends the result to the Slack workspace.
+4. slack_bot.py sends the result to the Slack workspace.
 
 ## _What is left?_
 
