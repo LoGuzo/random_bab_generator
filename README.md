@@ -17,6 +17,7 @@
 You need jansson, curl, cmake, virtualenv installed.
 
 ⚠️ You need your own app & bot token from Slack. Change the app token and the bot token in the .env file. ⚠️
+
 ⚠️ Your Slack bot must be in SOCKET MODE. ⚠️
 
 #### _MacOS_
