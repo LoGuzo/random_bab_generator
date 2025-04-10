@@ -49,15 +49,11 @@ Not yet tried! :-)
 
 ## _How to use?_
 
-Now our program will generate groups of 4 with all the members in the channel without Alex.
-
 The basic command is /randbab arg1 arg2 ... argN (You can pass multiple arguments).
 
 If you enter only the command without arguments, it will include everyone in the channel and generate groups.
-
-    •	The first argument is the size of each group.
-
-    •	The second to N-th arguments are names of members to exclude.
+	•	The first argument is the size of each group.
+	•	The second to N-th arguments are names of members to exclude.
 
 For example, if you want groups of 4 and want to exclude Alex:
 
