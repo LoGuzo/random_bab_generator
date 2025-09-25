@@ -1,28 +1,33 @@
-# Random Bab Generator
+# 랜덤밥 생성기
 
 <p align="center">
   <img src="./img/randombab.png" alt="Alt Text" width="150">
 </p>
 
-**Project Motivation** :
+**프로젝트 동기** :
 
-매 주 목요일마다 있는 랜덤밥 그룹을 조금 더 형평성에 맞게!
+매주 목요일에 있는 랜덤밥 그룹을 조금 더 형평성 있게!  
+매니저님들 손 안 아프게 하기 위한 자동화 프로그램
 
-매니저님들 손 안 아프게! 하기 위한 자동화 프로그램
+## 실행 방법
 
-## _How to Run_
+### 사전 준비
 
-##### Prerequisites:
+다음 패키지가 설치되어 있어야 합니다:
 
-You need jansson, curl, cmake, virtualenv installed.
+- jansson  
+- curl  
+- cmake  
+- virtualenv  
 
-⚠️ You need your own app & bot token from Slack. Change the app token and the bot token in the .env file. ⚠️
+⚠️ Slack에서 발급받은 **app token**과 **bot token**이 필요합니다.  
+`.env` 파일에서 본인 토큰으로 변경해야 합니다. ⚠️  
 
-⚠️ Your Slack bot must be in SOCKET MODE. ⚠️
+⚠️ Slack 봇은 반드시 **SOCKET MODE**로 실행되어야 합니다. ⚠️
 
-#### _MacOS_
+### MacOS
 
-```
+```bash
 $ git clone https://github.com/yeseongmoon/random_bab_generator.git
 $ cd random_bab_generator/
 $ cmake build/
@@ -34,37 +39,47 @@ $ pip install -r requirements.txt
 $ python3 slack_bot.py
 ```
 
-The Slack bot for your Slack workspace is now waiting for you to enter your custom command! (e.g., /randbab)
+→ 이제 Slack 워크스페이스에서 봇이 커스텀 명령어를 기다리고 있습니다!  
+(예: `/randbab`)
 
-#### _Windows_
-
-```
-Ask Chan-Woo Ban Jang!
-```
-
-#### _Linux_
+### Windows
 
 ```
-Not yet tried! :-)
+찬우 반장님께 물어보세요!
 ```
 
-## _How to use?_
+### Linux
 
-The basic command is /randbab arg1 arg2 ... argN (You can pass multiple arguments).
+```
+아직 시도해 보지 않았습니다 :-)
+```
 
-If you enter only the command without arguments, it will include everyone in the channel and generate groups.
+---
 
-	•	The first argument is the size of each group.
- 
-	•	The second to N-th arguments are names of members to exclude.
+## 사용 방법
 
-For example, if you want groups of 4 and want to exclude Alex:
+기본 명령어는 다음과 같습니다:
 
-Type: /randbab 4 Alex
+```
+/randbab arg1 arg2 ... argN
+```
 
-Our program will generate groups of 4, excluding Alex.
+- 인자 없이 `/randbab`만 입력하면, 채널에 있는 모든 멤버를 포함해 그룹을 생성합니다.  
+- **첫 번째 인자**: 그룹의 크기  
+- **두 번째 ~ N번째 인자**: 제외할 멤버 이름  
 
-## _Flow_
+예시:  
+4명씩 그룹을 만들고 `Alex`를 제외하려면:
+
+```
+/randbab 4 Alex
+```
+
+라고 입력하면 됩니다.
+
+---
+
+## 폴더 구조 & 흐름
 
 ```
 Random_bab_generator/
@@ -86,16 +101,14 @@ Random_bab_generator/
     └── .env
 ```
 
-1. Run slack_bot.py — it waits for a command via socket communication with your Slack workspace.
+1. `slack_bot.py` 실행 → Slack 워크스페이스와 소켓 통신으로 명령어 대기  
+2. 명령어 수신 시 Python 프로그램이 인자를 C 프로그램에 전달  
+3. C 프로그램에서 그룹 로직 실행 후 결과 출력  
+4. Python 프로그램이 결과를 Slack 워크스페이스에 전송  
 
-2. When the command is received, the Python program passes the arguments to the C program.
+---
 
-3. The C program handles the grouping logic and prints the result.
+## 앞으로 할 일
 
-4. slack_bot.py sends the result to the Slack workspace.
-
-## _What is left?_
-
-[ ] Make the slack bot into a real app
-
-[ ] Improve fairness by considering more user info (e.g., gender)
+- [ ] Slack 봇을 실제 앱으로 만들기  
+- [ ] 성별 등 더 많은 유저 정보를 고려하여 형평성 개선하기  
